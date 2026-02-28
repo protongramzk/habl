@@ -1,4 +1,4 @@
-import { createBrowserClient } from '../server/index.js';
+import { createBrowserClient } from '../supabase.js';
 
 const supabase = createBrowserClient();
 
@@ -42,7 +42,7 @@ export async function signUp(email, password, username) {
 
 		if (profileError) {
 			// Clean up auth user if profile creation fails
-			await supabase.auth.admin.deleteUser(authData.user.id);
+			// await supabase.auth.admin.deleteUser(authData.user.id); // This requires service role
 			return { data: null, error: profileError };
 		}
 
