@@ -1,4 +1,5 @@
-core a post based on engagement metrics
+/**
+ * Score a post based on engagement metrics
  * Factors: recency, reaction count, comment count, author following status
  * @param {{created_at: string, reactions?: any[], comments?: any[]}} post
  * @param {{now: Date, isFollowing: boolean, inGroup: boolean}} context
@@ -160,4 +161,3 @@ export async function getTrendingPosts(supabase, limit = 10) {
 		return { data: null, error: err };
 	}
 }
-

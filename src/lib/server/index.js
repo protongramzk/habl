@@ -1,16 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.PUBLIC_SUPABASE_ANON_KEY;
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Use a safe way to get env vars that works in both browser and server
+const getEnv = (name, fallback) => {
+    if (typeof process !== 'undefined' && process.env && process.env[name]) {
+        return process.env[name];
+    }
+    return fallback;
+};
 
-/**
- * Create browser Supabase client
- * @returns {import('@supabase/supabase-js').SupabaseClient}
- */
-export function createBrowserClient() {
-	return createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
+const SUPABASE_URL = getEnv('PUBLIC_SUPABASE_URL', 'http://localhost:54321');
+const SUPABASE_ANON_KEY = getEnv('PUBLIC_SUPABASE_ANON_KEY', 'dummy');
+const SUPABASE_SERVICE_ROLE = getEnv('SUPABASE_SERVICE_ROLE_KEY', 'dummy');
 
 /**
  * Create server Supabase client with service role
@@ -25,7 +25,7 @@ export function createServerClient(event) {
 		global: {
 			headers: {
 				authorization: event.request.headers.get('authorization') || '',
-				...(event.locals.session && {
+				...(event.locals?.session && {
 					'x-user-id': event.locals.session.user.id
 				})
 			}
