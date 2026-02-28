@@ -1,9 +1,9 @@
 // Central exports
-export * from './auth.js';
-export * from './server.js';
-export * from './content.js';
-export * from './groups.js';
-export * from './social.js';
-export * from './permissions.js';
-export * from './algorithm.js';
-export * from './utils.js';
+export * from './auth/index.js';
+export * from './server/index.js';
+export * from './core/content.js';
+export * from './core/groups.js';
+export * from './core/social.js';
+export * from './core/permissions.js';
+export * from './utils/algorithm.js';
+export * from './utils/utils.js';

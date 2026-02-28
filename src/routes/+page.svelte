@@ -1,5 +1,5 @@
 <script>
-  import {parseMarkdown} from '$lib/leorpiomd.esm.js'
+  import {parseMarkdown} from '$lib/vendor/leorpiomd.esm.js'
   const md=`# Welcome to Habl Ecosystem
   Habl Features
   > Connect people with virtual places 
