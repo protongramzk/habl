@@ -1,10 +1,8 @@
 <script>
+	import '$lib/styles/agnonion.css';
+	import '$lib/styles/default.css';
 	
 	let { children } = $props();
 </script>
-
-<svelte:head>
-	<link rel="stylesheet" href="agnonion.css"/>
-</svelte:head>
 
 {@render children()}
