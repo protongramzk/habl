@@ -1,0 +1,954 @@
+/**
+ * AGNONION.CSS — v1.0
+ * Structural-first, theme-agnostic CSS framework
+ * For Hableffect social platform
+ * 
+ * Philosophy:
+ * - No default colors (literal values banned)
+ * - No default shadows
+ * - No default border-radius
+ * - No font-family enforcement
+ * - All visual identity from CSS variables
+ * - Components work with or without theme
+ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 1. DESIGN TOKEN CONTRACT (REQUIRED IN THEME)        */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+:root {
+	/* Spacing scale (4px base) */
+	--agn-space-0: 0;
+	--agn-space-1: 0.25rem;
+	--agn-space-2: 0.5rem;
+	--agn-space-3: 0.75rem;
+	--agn-space-4: 1rem;
+	--agn-space-5: 1.5rem;
+	--agn-space-6: 2rem;
+	--agn-space-7: 3rem;
+	--agn-space-8: 4rem;
+
+	/* Border radius scale */
+	--agn-radius-xs: 0.25rem;
+	--agn-radius-sm: 0.375rem;
+	--agn-radius-md: 0.5rem;
+	--agn-radius-lg: 0.75rem;
+	--agn-radius-xl: 1rem;
+
+	/* Typography scale */
+	--agn-font-xs: 0.75rem;
+	--agn-font-sm: 0.875rem;
+	--agn-font-md: 1rem;
+	--agn-font-lg: 1.125rem;
+	--agn-font-xl: 1.25rem;
+	--agn-font-2xl: 1.5rem;
+
+	/* Colors (must be overridden in theme) */
+	--agn-bg: transparent;
+	--agn-surface: transparent;
+	--agn-surface-2: transparent;
+	--agn-text: inherit;
+	--agn-text-muted: inherit;
+	--agn-border: transparent;
+	--agn-accent: transparent;
+	--agn-accent-contrast: transparent;
+
+	/* Elevation */
+	--agn-shadow-sm: none;
+	--agn-shadow-md: none;
+	--agn-shadow-lg: none;
+
+	/* Transitions */
+	--agn-transition-fast: all 0.15s ease-in-out;
+	--agn-transition-normal: all 0.3s ease-in-out;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 2. RESET (LIGHT TOUCH)                              */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	background-color: var(--agn-bg);
+	color: var(--agn-text);
+}
+
+/* Semantic text elements */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.5;
+	margin: 0;
+	padding: 0;
+}
+
+ul,
+ol {
+	list-style: none;
+}
+
+a {
+	color: var(--agn-accent);
+	text-decoration: none;
+	transition: var(--agn-transition-fast);
+}
+
+a:hover {
+	opacity: 0.8;
+}
+
+button {
+	cursor: pointer;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+input,
+textarea,
+select {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 3. LAYOUT PRIMITIVES (FOUNDATION)                   */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-container {
+	width: 100%;
+	max-width: 1280px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--agn-space-4);
+	padding-right: var(--agn-space-4);
+}
+
+.agn-stack {
+	display: flex;
+	flex-direction: column;
+}
+
+.agn-stack.gap-1 {
+	gap: var(--agn-space-1);
+}
+
+.agn-stack.gap-2 {
+	gap: var(--agn-space-2);
+}
+
+.agn-stack.gap-3 {
+	gap: var(--agn-space-3);
+}
+
+.agn-stack.gap-4 {
+	gap: var(--agn-space-4);
+}
+
+.agn-stack.gap-5 {
+	gap: var(--agn-space-5);
+}
+
+.agn-stack.gap-6 {
+	gap: var(--agn-space-6);
+}
+
+.agn-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.agn-row.gap-1 {
+	gap: var(--agn-space-1);
+}
+
+.agn-row.gap-2 {
+	gap: var(--agn-space-2);
+}
+
+.agn-row.gap-3 {
+	gap: var(--agn-space-3);
+}
+
+.agn-row.gap-4 {
+	gap: var(--agn-space-4);
+}
+
+.agn-row.gap-5 {
+	gap: var(--agn-space-5);
+}
+
+.agn-row.between {
+	justify-content: space-between;
+}
+
+.agn-row.center {
+	justify-content: center;
+}
+
+.agn-row.end {
+	justify-content: flex-end;
+}
+
+.agn-grid {
+	display: grid;
+	gap: var(--agn-space-4);
+}
+
+.agn-grid.cols-2 {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.agn-grid.cols-3 {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.agn-grid.cols-4 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.agn-grid.cols-auto {
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+@media (max-width: 768px) {
+	.agn-grid.cols-2,
+	.agn-grid.cols-3,
+	.agn-grid.cols-4 {
+		grid-template-columns: 1fr;
+	}
+}
+
+.agn-divider {
+	height: 1px;
+	background-color: var(--agn-border);
+	border: none;
+	margin: var(--agn-space-4) 0;
+}
+
+.agn-spacer {
+	flex: 1;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 4. SURFACE COMPONENTS (CONTAINERS)                  */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-card {
+	background-color: var(--agn-surface);
+	border: 1px solid var(--agn-border);
+	border-radius: var(--agn-radius-md);
+	padding: var(--agn-space-4);
+	box-shadow: var(--agn-shadow-sm);
+	transition: var(--agn-transition-normal);
+}
+
+.agn-card:hover {
+	box-shadow: var(--agn-shadow-md);
+}
+
+.agn-card.elevated {
+	box-shadow: var(--agn-shadow-lg);
+}
+
+.agn-card.flat {
+	box-shadow: none;
+	border: none;
+}
+
+.agn-panel {
+	background-color: var(--agn-surface-2);
+	border-radius: var(--agn-radius-md);
+	padding: var(--agn-space-4);
+}
+
+.agn-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--agn-space-4);
+	padding: var(--agn-space-6) 0;
+	border-bottom: 1px solid var(--agn-border);
+}
+
+.agn-section:last-child {
+	border-bottom: none;
+}
+
+.agn-badge {
+	display: inline-block;
+	background-color: var(--agn-accent);
+	color: var(--agn-accent-contrast);
+	padding: var(--agn-space-2) var(--agn-space-3);
+	border-radius: var(--agn-radius-sm);
+	font-size: var(--agn-font-xs);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.agn-badge.secondary {
+	background-color: var(--agn-surface);
+	color: var(--agn-text);
+	border: 1px solid var(--agn-border);
+}
+
+.agn-badge.muted {
+	background-color: var(--agn-surface-2);
+	color: var(--agn-text-muted);
+}
+
+.agn-avatar {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: var(--agn-radius-lg);
+	background-color: var(--agn-surface-2);
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.agn-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.agn-avatar.lg {
+	width: 64px;
+	height: 64px;
+}
+
+.agn-avatar.sm {
+	width: 32px;
+	height: 32px;
+}
+
+.agn-avatar.xs {
+	width: 24px;
+	height: 24px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 5. NAVIGATION COMPONENTS                            */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-navbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: var(--agn-surface);
+	border-bottom: 1px solid var(--agn-border);
+	padding: var(--agn-space-4);
+	box-shadow: var(--agn-shadow-sm);
+}
+
+.agn-navbar-brand {
+	font-size: var(--agn-font-lg);
+	font-weight: 700;
+	color: var(--agn-text);
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-3);
+}
+
+.agn-navbar-menu {
+	display: flex;
+	gap: var(--agn-space-4);
+	align-items: center;
+}
+
+.agn-navbar-link {
+	color: var(--agn-text);
+	font-size: var(--agn-font-md);
+	padding: var(--agn-space-2) var(--agn-space-3);
+	border-radius: var(--agn-radius-sm);
+	transition: var(--agn-transition-fast);
+}
+
+.agn-navbar-link:hover,
+.agn-navbar-link.is-active {
+	background-color: var(--agn-surface-2);
+	color: var(--agn-accent);
+}
+
+.agn-sidebar {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--agn-surface);
+	border-right: 1px solid var(--agn-border);
+	height: 100vh;
+	width: 280px;
+	overflow-y: auto;
+	padding: var(--agn-space-4);
+	gap: var(--agn-space-2);
+	flex-shrink: 0;
+}
+
+.agn-sidebar-item {
+	padding: var(--agn-space-3) var(--agn-space-4);
+	color: var(--agn-text);
+	border-radius: var(--agn-radius-md);
+	cursor: pointer;
+	transition: var(--agn-transition-fast);
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-2);
+}
+
+.agn-sidebar-item:hover {
+	background-color: var(--agn-surface-2);
+}
+
+.agn-sidebar-item.is-active {
+	background-color: var(--agn-accent);
+	color: var(--agn-accent-contrast);
+}
+
+.agn-tabs {
+	display: flex;
+	border-bottom: 1px solid var(--agn-border);
+	gap: var(--agn-space-4);
+	padding: 0 var(--agn-space-4);
+}
+
+.agn-tab {
+	padding: var(--agn-space-4) 0;
+	color: var(--agn-text-muted);
+	cursor: pointer;
+	border-bottom: 2px solid transparent;
+	transition: var(--agn-transition-fast);
+	white-space: nowrap;
+}
+
+.agn-tab:hover {
+	color: var(--agn-text);
+}
+
+.agn-tab.is-active {
+	color: var(--agn-accent);
+	border-bottom-color: var(--agn-accent);
+}
+
+.agn-breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-2);
+	font-size: var(--agn-font-sm);
+	color: var(--agn-text-muted);
+}
+
+.agn-breadcrumb-item {
+	display: flex;
+	align-items: center;
+}
+
+.agn-breadcrumb-item::after {
+	content: '/';
+	margin-left: var(--agn-space-2);
+	color: var(--agn-border);
+}
+
+.agn-breadcrumb-item:last-child::after {
+	content: '';
+}
+
+.agn-breadcrumb-link {
+	color: var(--agn-accent);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 6. INTERACTION COMPONENTS (FORMS & BUTTONS)         */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--agn-space-2);
+	padding: var(--agn-space-3) var(--agn-space-5);
+	font-size: var(--agn-font-md);
+	font-weight: 600;
+	border: 1px solid transparent;
+	border-radius: var(--agn-radius-md);
+	cursor: pointer;
+	transition: var(--agn-transition-fast);
+	white-space: nowrap;
+}
+
+.agn-btn[data-variant='primary'] {
+	background-color: var(--agn-accent);
+	color: var(--agn-accent-contrast);
+	border-color: var(--agn-accent);
+}
+
+.agn-btn[data-variant='primary']:hover:not(:disabled) {
+	opacity: 0.9;
+	box-shadow: var(--agn-shadow-md);
+}
+
+.agn-btn[data-variant='secondary'] {
+	background-color: var(--agn-surface);
+	color: var(--agn-accent);
+	border-color: var(--agn-border);
+}
+
+.agn-btn[data-variant='secondary']:hover:not(:disabled) {
+	background-color: var(--agn-surface-2);
+}
+
+.agn-btn[data-variant='ghost'] {
+	background-color: transparent;
+	color: var(--agn-text);
+	border-color: transparent;
+}
+
+.agn-btn[data-variant='ghost']:hover:not(:disabled) {
+	background-color: var(--agn-surface-2);
+}
+
+.agn-btn[data-variant='danger'] {
+	background-color: #dc2626;
+	color: #fff;
+	border-color: #dc2626;
+}
+
+.agn-btn[data-variant='danger']:hover:not(:disabled) {
+	background-color: #b91c1c;
+}
+
+.agn-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.agn-btn.full-width {
+	width: 100%;
+}
+
+.agn-btn.lg {
+	padding: var(--agn-space-4) var(--agn-space-6);
+	font-size: var(--agn-font-lg);
+}
+
+.agn-btn.sm {
+	padding: var(--agn-space-2) var(--agn-space-3);
+	font-size: var(--agn-font-sm);
+}
+
+.agn-icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: var(--agn-radius-md);
+	background-color: transparent;
+	color: var(--agn-text);
+	cursor: pointer;
+	transition: var(--agn-transition-fast);
+}
+
+.agn-icon-btn:hover {
+	background-color: var(--agn-surface-2);
+}
+
+.agn-input,
+.agn-textarea,
+.agn-select {
+	width: 100%;
+	padding: var(--agn-space-3) var(--agn-space-4);
+	background-color: var(--agn-surface);
+	color: var(--agn-text);
+	border: 1px solid var(--agn-border);
+	border-radius: var(--agn-radius-md);
+	font-size: var(--agn-font-md);
+	transition: var(--agn-transition-fast);
+}
+
+.agn-input:focus,
+.agn-textarea:focus,
+.agn-select:focus {
+	outline: none;
+	border-color: var(--agn-accent);
+	box-shadow: 0 0 0 2px var(--agn-accent);
+	opacity: 0.2;
+}
+
+.agn-input::placeholder,
+.agn-textarea::placeholder {
+	color: var(--agn-text-muted);
+}
+
+.agn-textarea {
+	resize: vertical;
+	min-height: 100px;
+}
+
+.agn-input-group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--agn-space-2);
+}
+
+.agn-input-label {
+	font-size: var(--agn-font-sm);
+	font-weight: 600;
+	color: var(--agn-text);
+}
+
+.agn-input-hint {
+	font-size: var(--agn-font-xs);
+	color: var(--agn-text-muted);
+}
+
+.agn-input-error {
+	font-size: var(--agn-font-xs);
+	color: #dc2626;
+}
+
+.agn-toggle {
+	position: relative;
+	display: inline-flex;
+	width: 48px;
+	height: 28px;
+	cursor: pointer;
+}
+
+.agn-toggle input {
+	display: none;
+}
+
+.agn-toggle-slider {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--agn-border);
+	border-radius: 14px;
+	transition: var(--agn-transition-fast);
+}
+
+.agn-toggle-slider::before {
+	content: '';
+	position: absolute;
+	height: 24px;
+	width: 24px;
+	left: 2px;
+	bottom: 2px;
+	background-color: var(--agn-surface);
+	border-radius: 50%;
+	transition: var(--agn-transition-fast);
+}
+
+.agn-toggle input:checked + .agn-toggle-slider {
+	background-color: var(--agn-accent);
+}
+
+.agn-toggle input:checked + .agn-toggle-slider::before {
+	transform: translateX(20px);
+}
+
+.agn-checkbox {
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-2);
+	cursor: pointer;
+}
+
+.agn-checkbox input {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	accent-color: var(--agn-accent);
+}
+
+.agn-checkbox-label {
+	cursor: pointer;
+	user-select: none;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 7. CONTENT STRUCTURE (POST & COMMENT SYSTEM)        */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-post {
+	background-color: var(--agn-surface);
+	border: 1px solid var(--agn-border);
+	border-radius: var(--agn-radius-md);
+	overflow: hidden;
+	transition: var(--agn-transition-normal);
+}
+
+.agn-post:hover {
+	box-shadow: var(--agn-shadow-md);
+}
+
+.agn-post-header {
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-3);
+	padding: var(--agn-space-4);
+	border-bottom: 1px solid var(--agn-border);
+}
+
+.agn-post-author {
+	display: flex;
+	flex-direction: column;
+	gap: var(--agn-space-1);
+	flex: 1;
+}
+
+.agn-post-author-name {
+	font-weight: 600;
+	color: var(--agn-text);
+}
+
+.agn-post-author-info {
+	font-size: var(--agn-font-xs);
+	color: var(--agn-text-muted);
+}
+
+.agn-post-content {
+	padding: var(--agn-space-4);
+	line-height: 1.6;
+	color: var(--agn-text);
+	word-wrap: break-word;
+}
+
+.agn-post-media {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: var(--agn-space-2);
+	padding: 0 var(--agn-space-4) var(--agn-space-4);
+}
+
+.agn-post-media img,
+.agn-post-media video {
+	width: 100%;
+	height: auto;
+	border-radius: var(--agn-radius-md);
+	object-fit: cover;
+}
+
+.agn-post-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--agn-space-3) var(--agn-space-4);
+	border-top: 1px solid var(--agn-border);
+	font-size: var(--agn-font-sm);
+	color: var(--agn-text-muted);
+}
+
+.agn-post-actions {
+	display: flex;
+	gap: var(--agn-space-2);
+}
+
+.agn-post-action {
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-1);
+	color: var(--agn-text-muted);
+	cursor: pointer;
+	transition: var(--agn-transition-fast);
+}
+
+.agn-post-action:hover {
+	color: var(--agn-accent);
+}
+
+.agn-post-action.is-active {
+	color: var(--agn-accent);
+}
+
+.agn-comment {
+	display: flex;
+	gap: var(--agn-space-3);
+	padding: var(--agn-space-4);
+	border-top: 1px solid var(--agn-border);
+}
+
+.agn-comment:first-child {
+	border-top: none;
+}
+
+.agn-comment-body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: var(--agn-space-2);
+}
+
+.agn-comment-header {
+	display: flex;
+	align-items: center;
+	gap: var(--agn-space-2);
+}
+
+.agn-comment-author {
+	font-weight: 600;
+	color: var(--agn-text);
+}
+
+.agn-comment-time {
+	font-size: var(--agn-font-xs);
+	color: var(--agn-text-muted);
+}
+
+.agn-comment-content {
+	color: var(--agn-text);
+	line-height: 1.5;
+}
+
+.agn-comment-actions {
+	display: flex;
+	gap: var(--agn-space-3);
+	font-size: var(--agn-font-xs);
+	color: var(--agn-text-muted);
+}
+
+.agn-comment-action {
+	cursor: pointer;
+	transition: var(--agn-transition-fast);
+}
+
+.agn-comment-action:hover {
+	color: var(--agn-accent);
+}
+
+.agn-comment-thread {
+	display: flex;
+	flex-direction: column;
+	border-left: 2px solid var(--agn-border);
+	margin-left: var(--agn-space-4);
+	padding-left: var(--agn-space-4);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 8. STATE CLASSES (NO INLINE STYLES)                 */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.is-active {
+	color: var(--agn-accent);
+	font-weight: 600;
+}
+
+.is-muted {
+	opacity: 0.6;
+	color: var(--agn-text-muted);
+}
+
+.is-loading {
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+.is-loading::after {
+	content: '';
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	margin-left: var(--agn-space-2);
+	border: 2px solid var(--agn-border);
+	border-top-color: var(--agn-accent);
+	border-radius: 50%;
+	animation: agn-spin 0.6s linear infinite;
+}
+
+@keyframes agn-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.is-disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.is-selected {
+	background-color: var(--agn-accent);
+	color: var(--agn-accent-contrast);
+}
+
+.is-error {
+	border-color: #dc2626 !important;
+	color: #dc2626;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 9. RESPONSIVE UTILITIES                             */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-hide-mobile {
+	display: none;
+}
+
+@media (min-width: 768px) {
+	.agn-hide-mobile {
+		display: block;
+	}
+
+	.agn-hide-desktop {
+		display: none;
+	}
+}
+
+.agn-flex-wrap {
+	flex-wrap: wrap;
+}
+
+.agn-flex-nowrap {
+	flex-wrap: nowrap;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 10. ACCESSIBILITY                                   */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.agn-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* Focus visible for keyboard navigation */
+.agn-btn:focus-visible,
+.agn-input:focus-visible,
+.agn-icon-btn:focus-visible,
+.agn-tab:focus-visible {
+	outline: 2px solid var(--agn-accent);
+	outline-offset: 2px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* END AGNONION.CSS v1.0                               */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */

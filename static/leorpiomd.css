@@ -1,0 +1,241 @@
+/* =========================================
+   LeorpioMD - Material Design 3 Markdown CSS
+   ========================================= */
+
+:root {
+  /* Light theme colors (Material-like) */
+  --md-bg: #fdfcff;
+  --md-surface: #ffffff;
+  --md-surface-variant: #f3edf7;
+  --md-text: #1c1b1f;
+  --md-text-muted: #5f5e62;
+  --md-primary: #6750a4;
+  --md-primary-container: #eaddff;
+  --md-outline: #cac4d0;
+  --md-code-bg: #1e1e1e;
+  --md-code-text: #d4d4d4;
+  --md-radius: 14px;
+  --md-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --md-bg: #101014;
+    --md-surface: #1c1b1f;
+    --md-surface-variant: #2b2930;
+    --md-text: #e6e1e5;
+    --md-text-muted: #a7a3a9;
+    --md-primary: #d0bcff;
+    --md-primary-container: #4f378b;
+    --md-outline: #49454f;
+    --md-code-bg: #1e1e1e;
+    --md-code-text: #d4d4d4;
+  }
+}
+
+/* Manual theme override */
+[data-theme="dark"] {
+  --md-bg: #101014;
+  --md-surface: #1c1b1f;
+  --md-surface-variant: #2b2930;
+  --md-text: #e6e1e5;
+  --md-text-muted: #a7a3a9;
+  --md-primary: #d0bcff;
+  --md-primary-container: #4f378b;
+  --md-outline: #49454f;
+}
+
+/* =========================================
+   Base Typography
+   ========================================= */
+
+.leorpiomd {
+  background: var(--md-bg);
+  color: var(--md-text);
+  font-family: var(--md-font);
+  line-height: 1.7;
+  font-size: 16px;
+  padding: 24px;
+}
+
+.leorpiomd h1,
+.leorpiomd h2,
+.leorpiomd h3,
+.leorpiomd h4,
+.leorpiomd h5,
+.leorpiomd h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.02em;
+}
+
+.leorpiomd h1 { font-size: 2.2em; }
+.leorpiomd h2 { font-size: 1.8em; }
+.leorpiomd h3 { font-size: 1.4em; }
+.leorpiomd h4 { font-size: 1.2em; }
+
+.leorpiomd p {
+  margin: 1em 0;
+  color: var(--md-text);
+}
+
+.leorpiomd a {
+  color: var(--md-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.leorpiomd a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   Buttons
+   ========================================= */
+
+.leorpiomd button {
+  background: var(--md-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.leorpiomd button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.leorpiomd button:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   Code Blocks (VSCode + Mac style)
+   ========================================= */
+
+.leorpiomd pre {
+  background: var(--md-code-bg);
+  color: var(--md-code-text);
+  padding: 16px;
+  border-radius: 12px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+  margin: 1.5em 0;
+}
+
+/* Mac window dots */
+.leorpiomd pre::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  width: 12px;
+  height: 12px;
+  background: #ff5f56;
+  border-radius: 50%;
+  box-shadow:
+    18px 0 #ffbd2e,
+    36px 0 #27c93f;
+}
+
+/* space for dots */
+.leorpiomd pre code {
+  display: block;
+  margin-top: 16px;
+}
+
+/* Inline code */
+.leorpiomd code {
+  background: var(--md-surface-variant);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.95em;
+}
+
+/* =========================================
+   Blockquote
+   ========================================= */
+
+.leorpiomd blockquote {
+  margin: 1.5em 0;
+  padding: 14px 18px;
+  background: var(--md-surface-variant);
+  border-left: 4px solid var(--md-primary);
+  border-radius: 10px;
+  color: var(--md-text-muted);
+  font-style: italic;
+}
+
+/* =========================================
+   Tables
+   ========================================= */
+
+.leorpiomd table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  border-radius: var(--md-radius);
+  overflow: hidden;
+  background: var(--md-surface);
+}
+
+.leorpiomd th,
+.leorpiomd td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.leorpiomd thead {
+  background: var(--md-primary-container);
+  color: var(--md-text);
+}
+
+.leorpiomd tbody tr:nth-child(odd) {
+  background: var(--md-surface);
+}
+
+.leorpiomd tbody tr:nth-child(even) {
+  background: var(--md-surface-variant);
+}
+
+.leorpiomd tbody tr:hover {
+  background: rgba(103, 80, 164, 0.08);
+}
+
+/* =========================================
+   Lists
+   ========================================= */
+
+.leorpiomd ul,
+.leorpiomd ol {
+  margin: 1em 0 1em 1.5em;
+}
+
+.leorpiomd li {
+  margin: 0.4em 0;
+}
+
+/* =========================================
+   Horizontal rule
+   ========================================= */
+
+.leorpiomd hr {
+  border: none;
+  height: 1px;
+  background: var(--md-outline);
+  margin: 2em 0;
+}

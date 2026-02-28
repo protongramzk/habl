@@ -1,0 +1,51 @@
+:root{
+  --background:hsla(318,16.9%,91.7%,0.925);
+  --surface:hsl(36,100%,89.7%);
+  --primary:hsla(36,100%,54%,0.925);
+  --foreground:hsla(36,0%,4.3%,0.925);
+  --primaryContainer:hsl(36,100%,49.7%);
+  --primaryText:hsl(36,100%,10.6%);
+  --secondary:hsl(261.4,100%,78.3%);
+  --secondaryText:hsl(261.4,80.9%,8.9%);
+  --secondaryContainer:hsl(261.4,97.8%,78.6%);
+  --md:5px;
+  
+  
+  /* Light theme colors (Material-like) */
+  --md-bg: #fdfcff;
+  --md-surface: #ffffff;
+  --md-surface-variant: rgb(246,229,215);
+  --md-text: #1c1b1f;
+  --md-text-muted: #5f5e62;
+  --md-primary: rgb(255,174,44);
+  --md-primary-container: rgb(255,196,101);
+  --md-outline: rgb(208,166,98);
+  --md-code-bg: #1e1e1e;
+  --md-code-text: #d4d4d4;
+}
+
+.navbar{
+  background:var(--surface);
+  color:var(--foreground);
+  width:100%;
+  padding:var(--md);
+  position: fixed;
+  z-index:999;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  box-shadow: 0px 0px 100px -30px rgba(0,0,0,0.221);
+}
+.navbar.bottom{
+  left:0;
+  bottom: 0;
+}
+.btn{
+  border:0;
+  font-size:0.8em;
+  border-radius:1rem;
+  padding:var(--md);
+}
+.bg-primary{
+  background:var(--primary);
+  color:var(--primaryText);
+}
