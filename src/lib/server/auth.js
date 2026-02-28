@@ -1,4 +1,4 @@
-import { createBrowserClient } from './server.js';
+import { createBrowserClient } from './index.js';
 
 const supabase = createBrowserClient();
 

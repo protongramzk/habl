@@ -1,42 +1,33 @@
-# sv
+# Habl Ecosystem
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Connect people with virtual places.
 
-## Creating a project
+## Project Structure
 
-If you're seeing this, you've probably already done this step. Congrats!
+- `src/lib/core`: Core business logic (permissions, content, groups, social).
+- `src/lib/auth`: Authentication logic and Supabase client.
+- `src/lib/server`: Server-only utilities and database clients.
+- `src/lib/styles`: Global and component styles.
+- `src/lib/utils`: General purpose utility functions and algorithms.
+- `src/lib/vendor`: Third-party libraries.
+- `src/routes`: Application pages and layouts.
 
-```sh
-# create a new project
-npx sv create my-app
+## Getting Started
+
+### Installation
+
+```bash
+npm install
 ```
 
-To recreate this project with the same configuration:
+### Development
 
-```sh
-# recreate this project
-npx sv create --template minimal --no-types --install npm habl
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+### Building
 
-To create a production version of your app:
-
-```sh
+```bash
 npm run build
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
