@@ -1,114 +1,85 @@
-<script>
-	import { signUp } from '$lib/auth';
-	import { goto } from '$app/navigation';
+<script lang="ts">
+  import { register, loginWithGitHub } from '$lib/auth';
+  import { goto } from '$app/navigation';
 
-	let username = '';
-	let email = '';
-	let password = '';
-	let isLoading = false;
-	let errorMessage = '';
-	let successMessage = '';
+  let email = '';
+  let password = '';
+  let loading = false;
+  let errorMessage = '';
 
-	async function handleSignUp() {
-		isLoading = true;
-		errorMessage = '';
-		successMessage = '';
-		try {
-			const { data, error } = await signUp(email, password, username);
-			if (error) {
-				errorMessage = error.message;
-			} else {
-				successMessage = 'Registration successful! Please check your email for verification.';
-				// Optionally redirect after a delay
-				// setTimeout(() => goto('/auth/login'), 3000);
-			}
-		} catch (error) {
-			console.error('Sign-up failed:', error);
-			errorMessage = 'An unexpected error occurred. Please try again.';
-		} finally {
-			isLoading = false;
-		}
-	}
+  async function handleRegister() {
+    loading = true;
+    errorMessage = '';
+    try {
+      // Kita cuma daftar ke Supabase Auth
+      // Username akan diset di halaman /onboarding nanti
+      await register(email, password, 'temporary_username'); 
+      goto('/onboarding');
+    } catch (e: any) {
+      errorMessage = e.message;
+    } finally {
+      loading = false;
+    }
+  }
 </script>
 
-<div class="agn-container" style="max-width: 480px; margin-top: var(--agn-space-8);">
-	<div class="agn-card elevated">
-		<div class="agn-stack gap-6">
-			<div>
-				<h1 class="agn-font-2xl" style="font-weight: 700;">Create an account</h1>
-				<p class="is-muted">Join habl and connect with virtual places</p>
-			</div>
+<div class="auth-container">
+  <div class="auth-card">
+    <h1>Daftar Akun</h1>
 
-			{#if successMessage}
-				<div class="agn-panel" style="border: 1px solid var(--agn-success); color: var(--agn-success);">
-					{successMessage}
-					<div class="agn-stack gap-2" style="margin-top: var(--agn-space-4);">
-						<a href="/auth/login" class="agn-btn full-width" data-variant="primary">Go to Login</a>
-					</div>
-				</div>
-			{:else}
-				<form on:submit|preventDefault={handleSignUp} class="agn-stack gap-4">
-					<div class="agn-input-group">
-						<label for="username" class="agn-input-label">Username</label>
-						<input
-							type="text"
-							id="username"
-							class="agn-input {errorMessage ? 'is-error' : ''}"
-							placeholder="johndoe"
-							bind:value={username}
-							required
-							disabled={isLoading}
-						/>
-					</div>
+    <button class="github-btn" on:click={loginWithGitHub}>
+      <span class="material-icons">code</span>
+      Masuk dengan GitHub
+    </button>
 
-					<div class="agn-input-group">
-						<label for="email" class="agn-input-label">Email address</label>
-						<input
-							type="email"
-							id="email"
-							class="agn-input {errorMessage ? 'is-error' : ''}"
-							placeholder="name@example.com"
-							bind:value={email}
-							required
-							disabled={isLoading}
-						/>
-					</div>
+    <div class="divider">atau</div>
 
-					<div class="agn-input-group">
-						<label for="password" class="agn-input-label">Password</label>
-						<input
-							type="password"
-							id="password"
-							class="agn-input {errorMessage ? 'is-error' : ''}"
-							placeholder="••••••••"
-							bind:value={password}
-							required
-							disabled={isLoading}
-						/>
-						<p class="agn-input-hint">Must be at least 6 characters long</p>
-					</div>
+    <form on:submit|preventDefault={handleRegister}>
+      {#if errorMessage}<p class="error">{errorMessage}</p>{/if}
+      
+      <div class="field">
+        <label>Email</label>
+        <input type="email" bind:value={email} required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" bind:value={password} required />
+      </div>
+      <button type="submit" disabled={loading}>Daftar</button>
+    </form>
 
-					{#if errorMessage}
-						<p class="agn-input-error">{errorMessage}</p>
-					{/if}
-
-					<button
-						type="submit"
-						class="agn-btn full-width {isLoading ? 'is-loading' : ''}"
-						data-variant="primary"
-						disabled={isLoading}
-					>
-						{isLoading ? 'Creating account...' : 'Create account'}
-					</button>
-				</form>
-
-				<div class="agn-divider"></div>
-
-				<div class="agn-row center gap-2">
-					<span class="is-muted">Already have an account?</span>
-					<a href="/auth/login" class="agn-navbar-link" style="padding: 0;">Sign in instead</a>
-				</div>
-			{/if}
-		</div>
-	</div>
+    <p class="footer-text">
+      Sudah punya akun? <a href="/auth/login">Masuk</a>
+    </p>
+  </div>
 </div>
+
+<style>
+  .auth-container { display: flex; justify-content: center; align-items: center; min-height: 80vh; background: var(--bg-primary); }
+  .auth-card { background: var(--bg-surface); padding: var(--space-xl); border-radius: var(--radius-md); width: 100%; max-width: 400px; border: 1px solid var(--border-subtle); }
+  
+  .github-btn {
+    width: 100%;
+    padding: var(--space-md);
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .divider { text-align: center; margin: var(--space-lg) 0; color: var(--text-secondary); font-size: 0.8rem; }
+  
+  .field { margin-bottom: var(--space-lg); }
+  input { width: 100%; padding: var(--space-md); background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white; box-sizing: border-box; }
+  
+  button[type="submit"] { width: 100%; padding: var(--space-md); background: var(--accent); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; }
+  
+  .error { color: #f4212e; font-size: 0.85rem; }
+  .footer-text { text-align: center; margin-top: var(--space-xl); color: var(--text-secondary); }
+</style>

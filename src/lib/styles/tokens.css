@@ -1,0 +1,28 @@
+:root {
+
+  /* colors */
+  --bg-primary: #000000;
+  --bg-surface: #111214;
+  --border-subtle: #2f3336;
+
+  --text-primary: #e7e9ea;
+  --text-secondary: #71767b;
+
+  --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+
+  /* spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+
+  /* radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+
+  /* font */
+  --font-main: system-ui, -apple-system, sans-serif;
+
+}
