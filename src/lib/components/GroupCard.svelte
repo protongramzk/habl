@@ -1,81 +1,27 @@
-<script lang="ts">
-  export let group: any;
-
-  // Logic mapping URL berdasarkan level
-  const getGroupUrl = (level: number, id: string) => {
-    switch(level) {
-      case 4: return `/a/${id}`;       // Alliance
-      case 3: return `/f/${id}`;       // Federation
-      case 2: return `/g/${id}`;       // Group
-      case 1: return `/g/sub/${id}`;   // Subgroup
-      default: return `/g/${id}`;
-    }
-  };
-
-  const bannerUrl = group.banner_url || `https://api.dicebear.com/7.x/shapes/svg?seed=${group.slug}`;
+<script>
+  export let group; // Data object grup
+  
+  // Mapping warna badge berdasarkan level (1=Sub, 2=Group, 3=Fed, 4=Alli)
+  const colors = { 1: '#5e5e5e', 2: '#1d9bf0', 3: '#8257e5', 4: '#f91880' };
+  const labels = { 1: 'Subgroup', 2: 'Group', 3: 'Federation', 4: 'Alliance' };
 </script>
 
 <div class="group-card">
-  <div class="cover" style="background-image: url({bannerUrl})"></div>
-  
-  <div class="group-info">
-    <h2>{group.name}</h2>
-    <p class="member-count">
-      <span class="material-icons" style="font-size: 14px;">person</span>
-      {group.member_count} Member
-    </p>
-    
-    <a href={getGroupUrl(group.level, group.id)} class="view-btn">
-      Lihat {group.level === 4 ? 'Aliansi' : 'Grup'}
-    </a>
+  <img src={group.banner_url} alt="Cover" class="banner" />
+  <div class="content">
+    <div class="badge" style="background: {colors[group.level]}">{labels[group.level]}</div>
+    <h3>{group.name}</h3>
+    <p>{group.description}</p>
+    <a href="/g/{group.slug}" class="join-btn">Lihat Grup</a>
   </div>
 </div>
 
 <style>
-  .group-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .cover {
-    height: 100px;
-    background-size: cover;
-    background-position: center;
-    background-color: var(--border-subtle);
-  }
-
-  .group-info {
-    padding: var(--space-md);
-    text-align: center;
-  }
-
-  h2 { font-size: 1.1rem; margin: 0 0 var(--space-xs) 0; }
-  
-  .member-count {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    margin-bottom: var(--space-md);
-  }
-
-  .view-btn {
-    display: block;
-    background: var(--accent);
-    color: white;
-    text-decoration: none;
-    padding: var(--space-sm);
-    border-radius: var(--radius-sm);
-    font-weight: bold;
-    font-size: 0.9rem;
-    transition: opacity 0.2s;
-  }
-
-  .view-btn:hover { opacity: 0.8; }
+  .group-card { background: var(--bg-surface); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-subtle); }
+  .banner { width: 100%; height: 100px; object-fit: cover; }
+  .content { padding: var(--space-md); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; color: white; margin-bottom: var(--space-sm); }
+  h3 { margin: 0; color: var(--text-primary); }
+  p { color: var(--text-secondary); font-size: 0.9rem; }
+  .join-btn { display: block; margin-top: var(--space-md); text-align: center; padding: var(--space-xs); border: 1px solid var(--accent); border-radius: 20px; color: var(--accent); text-decoration: none; }
 </style>

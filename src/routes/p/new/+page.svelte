@@ -1,91 +1,70 @@
 <script>
-  import { supabase } from '$lib/supabase';
-  import { goto } from '$app/navigation';
-  
-  export let group_id = null; // Opsional: kalau posting di dalam grup
-  
-  let content = '';
-  let loading = false;
-  let fileInput;
-
-  async function handleSubmit() {
-    loading = true;
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    // Ambil author_id dari tabel accounts (kita cari berdasarkan auth_id)
-    const { data: account } = await supabase
-      .from('accounts')
-      .select('id')
-      .eq('auth_id', user.id)
-      .single();
-
-    const { error } = await supabase.from('posts').insert([
-      { 
-        author_id: account.id, 
-        group_id, 
-        content,
-        privacy: group_id ? 'group_only' : 'public'
-      }
-    ]);
-
-    if (!error) goto('/');
-    loading = false;
-  }
+  import PostForm from '$lib/components/PostForm.svelte';
 </script>
 
-<form class="post-form" on:submit|preventDefault={handleSubmit}>
-  <textarea 
-    bind:value={content} 
-    placeholder="Apa yang sedang terjadi?" 
-    required 
-  />
-  
-  <div class="actions">
-    <button type="button" class="icon-btn" on:click={() => fileInput.click()}>
-      <span class="material-icons">image</span>
-    </button>
-    <input type="file" bind:this={fileInput} hidden accept="image/*" />
-    
-    <button type="submit" disabled={loading || !content}>
-      {loading ? 'Mengirim...' : 'Posting'}
-    </button>
-  </div>
-</form>
+<div class="new-post-page">
+  <header class="page-header">
+    <a href="/" class="back-btn" aria-label="Kembali ke Beranda">
+      <span class="material-icons">arrow_back</span>
+    </a>
+    <h2>Buat Postingan</h2>
+  </header>
+
+  <main class="form-wrapper">
+    <PostForm />
+  </main>
+</div>
 
 <style>
-  .post-form {
-    padding: var(--space-md);
-    border-bottom: 1px solid var(--border-subtle);
+  .new-post-page {
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
   }
-  textarea {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    resize: none;
-    min-height: 100px;
-    font-family: var(--font-main);
-  }
-  textarea:focus { outline: none; }
-  
-  .actions {
+
+  .page-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: var(--space-sm);
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-subtle);
+    
+    /* Efek Sticky & Blur (Glassmorphism tipis) */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7); /* Sesuaikan dengan warna background gelapmu */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
-  
-  .icon-btn { background: none; border: none; color: var(--accent); cursor: pointer; }
-  
-  button[type="submit"] {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: var(--space-xs) var(--space-xl);
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
+
+  .page-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--text-primary);
+    font-weight: 600;
   }
-  button[type="submit"]:disabled { opacity: 0.5; }
+
+  .back-btn {
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .form-wrapper {
+    padding: var(--space-md);
+  }
 </style>
