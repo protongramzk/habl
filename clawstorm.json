@@ -1,0 +1,9 @@
+{
+  "outputFile": "clawstorm.css",
+  "minify": true,
+  "ignore": [],
+  "chunkSize": 25,
+  "maxRetries": 2,
+  "cache": true,
+  "verbose": false
+}

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habr</title>
+  </head>
+  <body>
+  <style>
+/* 1. Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* 2. Setup Variable & Default (Inter) */
+:root {
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Geist', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    color: #1a1a1a;
+}
+
+/* 3. Spesifik untuk Judul Besar (Geist) */
+h1, h2, h3, h4, h5, h6, 
+.display-text, 
+.hero-title,
+thead th {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: -0.04em; /* Geist paling seksi kalau agak rapat di judul */
+    line-height: 1.1;
+}
+
+h1 { font-size: 3.5rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+
+/* 4. Teks Kecil, Form, & Input (Inter Tetap Dominan) */
+p, li, dd, dt, label, input, textarea, button {
+    font-family: var(--font-main);
+    font-size: 1rem;
+}
+
+small, .caption, .footer-text, figcaption {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+    letter-spacing: 0.01em; /* Inter di ukuran kecil enak dikasih sedikit napas */
+}
+
+/* Biar Code Block nggak ikutan berubah */
+code, kbd, pre, samp {
+    font-family: ui-monospace, 'Cascadia Code', monospace;
+}
+
+  </style>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>
