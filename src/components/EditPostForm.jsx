@@ -4,7 +4,7 @@ import { useNavigate } from "@solidjs/router";
 import { X, Loader2 } from "lucide-solid";
 import { supabase } from "../utils/supabase";
 import { user } from "../utils/auth";
-import { deleteFromPosts } from "../utils/storage-helper";
+import { deleteFromPosts } from "../utils/storageHelper";
 
 export default function EditPostForm(props) {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { createSignal, onMount, For, Show } from "solid-js";
 import { useNavigate, A } from "@solidjs/router";
 import { supabase } from "../utils/supabase";
 import { user } from "../utils/auth";
-import { deleteComment } from "../utils/posts-delete";
+import { deleteComment } from "../utils/posts";
 import MenuBar from "./MenuBar";
 import { Edit3, Trash2, MoreVertical } from "lucide-solid";
 
