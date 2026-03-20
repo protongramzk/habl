@@ -1,64 +1,51 @@
-// src/components/Navbar.jsx
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, useLocation } from "@solidjs/router";
 import { user } from "../utils/auth";
 import { Home, PlusSquare, Users, User } from "lucide-solid";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const goAccount = () => {
-    if (user()) navigate("/u");
+    if (user()) navigate("/u/" + (user().username || user().email));
     else navigate("/login");
   };
 
-  // Shadcn Nova style button
-  const navButtonClass = "flex flex-col items-center justify-center rounded-md h-9 w-9 text-neutral-400 hover:text-neutral-50 hover:bg-neutral-800/50 transition-colors";
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <nav class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-md z-50">
-      <div class="relative overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900/90 backdrop-blur-md shadow-lg">
-        <div class="flex justify-between items-center px-6 py-3">
-          {/* Home Button */}
-          <button
-            onClick={() => navigate("/")}
-            class={navButtonClass}
-            title="Home"
-            aria-label="Home"
-          >
-            <Home size={20} stroke-width={1.5} />
-          </button>
+    <nav class="navbar-container">
+      <button
+        onClick={() => navigate("/")}
+        class={"nav-icon-btn " + (isActive("/") ? "active" : "")}
+        title="Home"
+      >
+        <Home size={22} stroke-width={isActive("/") ? 2.5 : 1.5} />
+      </button>
 
-          {/* Create Post Button */}
-          <button
-            onClick={() => navigate("/create-post")}
-            class={navButtonClass}
-            title="Create Post"
-            aria-label="Create Post"
-          >
-            <PlusSquare size={20} stroke-width={1.5} />
-          </button>
+      <button
+        onClick={() => navigate("/create")}
+        class={"nav-icon-btn " + (isActive("/create") ? "active" : "")}
+        title="Create Post"
+      >
+        <PlusSquare size={22} stroke-width={isActive("/create") ? 2.5 : 1.5} />
+      </button>
 
-          {/* Groups Button */}
-          <button
-            onClick={() => navigate("/g")}
-            class={navButtonClass}
-            title="Groups"
-            aria-label="Groups"
-          >
-            <Users size={20} stroke-width={1.5} />
-          </button>
+      <button
+        onClick={() => navigate("/group-list")}
+        class={"nav-icon-btn " + (isActive("/group-list") ? "active" : "")}
+        title="Groups"
+      >
+        <Users size={22} stroke-width={isActive("/group-list") ? 2.5 : 1.5} />
+      </button>
 
-          {/* Account Button */}
-          <button
-            onClick={goAccount}
-            class={navButtonClass}
-            title={user() ? "Profile" : "Login"}
-            aria-label={user() ? "Profile" : "Login"}
-          >
-            <User size={20} stroke-width={1.5} />
-          </button>
-        </div>
-      </div>
+      <button
+        onClick={goAccount}
+        class={"nav-icon-btn " + (isActive("/u") || isActive("/login") ? "active" : "")}
+        title={user() ? "Profile" : "Login"}
+      >
+        <User size={22} stroke-width={isActive("/u") || isActive("/login") ? 2.5 : 1.5} />
+      </button>
     </nav>
   );
 }

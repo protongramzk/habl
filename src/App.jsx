@@ -9,11 +9,11 @@ import Login from "./routes/Login";
 import PostDetail from "./routes/PostDetail"
 import UserEdit from "./routes/UserEdit"
 import UserProfile from "./routes/UserProfile"
-import GroupList from "./routes/GroupList.jsx";
-import GroupCreate from "./routes/GroupCreate.jsx";
-import FederationCreate from "./routes/FederationCreate.jsx";
-import GroupDetail from "./routes/GroupDetail.jsx";
-import GroupPost from "./routes/GroupPost.jsx";
+import GroupList from "./routes/GroupList";
+import GroupCreate from "./routes/GroupCreate";
+import FederationCreate from "./routes/FederationCreate";
+import GroupDetail from "./routes/GroupDetail";
+import GroupPost from "./routes/GroupPost";
 
 function App() {
   onMount(async () => {
@@ -29,6 +29,7 @@ function App() {
       <Route path="/" component={Home} />
       <Route path="/register" component={Register} />
       <Route path="/create" component={CreatePost} />
+      <Route path="/create-post" component={CreatePost} />
       <Route path="/login" component={Login} />
       <Route path="/p/:postId" component={PostDetail} />
       <Route path="/useredit" component={UserEdit} />

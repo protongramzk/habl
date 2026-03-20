@@ -16,7 +16,7 @@
   --radius-full: 9999px;
 }
 
-/* Explicit Reset for Buttons to avoid inheritance from legacy CSS */
+/* Reset buttons and generic interactive elements */
 button {
   background: none;
   border: none;
@@ -29,8 +29,8 @@ button {
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text-primary);
+  background-color: var(--color-bg) !important;
+  color: var(--color-text-primary) !important;
   font-family: var(--font-main);
   margin: 0;
   padding: 0;
@@ -72,7 +72,7 @@ h1, h2, h3, h4, .font-heading {
 
 .btn:disabled {
   opacity: 0.5;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }
 
 .btn-primary {
@@ -107,6 +107,7 @@ h1, h2, h3, h4, .font-heading {
   outline: none;
   width: 100%;
   transition: all 0.2s ease;
+  font-family: var(--font-main);
 }
 
 .input-field:focus {
@@ -157,7 +158,7 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .upload-zone {
@@ -177,4 +178,9 @@ h1, h2, h3, h4, .font-heading {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background-color: rgba(219, 39, 119, 0.05);
+}
+
+textarea.input-field {
+  min-height: 120px;
+  resize: vertical;
 }

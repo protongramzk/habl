@@ -1,4 +1,3 @@
-// src/components/PostCard.jsx
 import { createSignal, onMount, Show, For } from "solid-js";
 import { useNavigate, A } from "@solidjs/router";
 import { Heart, MessageCircle, Share2, Edit3, Trash2, MoreVertical } from "lucide-solid";
@@ -17,7 +16,7 @@ export default function PostCard(props) {
   const navigate = useNavigate();
   const post = props.post;
 
-  const [userProfile, setUserProfile] = createSignal(null);
+  const [userProfile, setUserProfile] = createSignal(post.author || null);
   const [reactionCount, setReactionCount] = createSignal(0);
   const [commentCount, setCommentCount] = createSignal(0);
   const [liked, setLiked] = createSignal(false);
@@ -26,26 +25,34 @@ export default function PostCard(props) {
 
   onMount(async () => {
     try {
-      const [userData, reactCount, commentCountData, likedState] =
-        await Promise.all([
-          getUserProfile(post.account_id),
-          getReactionCount(post.id),
-          getCommentCount(post.id),
-          hasReacted(post.id),
-        ]);
+      // If we don't have userProfile, fetch it
+      if (!userProfile()) {
+        getUserProfile(post.account_id).then(data => setUserProfile(data)).catch(() => {});
+      }
 
-      setUserProfile(userData);
-      setReactionCount(reactCount || 0);
-      setCommentCount(commentCountData || 0);
-      setLiked(likedState);
+      // Fetch stats in parallel, but handle individually to prevent total failure
+      getReactionCount(post.id).then(count => setReactionCount(count || 0)).catch(() => {});
+      getCommentCount(post.id).then(count => setCommentCount(count || 0)).catch(() => {});
+
+      if (user()) {
+        hasReacted(post.id).then(state => setLiked(state)).catch(() => {});
+      }
     } catch (err) {
-      console.error("Failed to load post data:", err);
+      console.error("Failed to load post data stats:", err);
     } finally {
-      setLoading(false);
+      // Small delay to ensure some data is likely there, but don't hang
+      setTimeout(() => setLoading(false), 500);
     }
   });
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (!user()) return navigate("/login");
+
     try {
       const state = await toggleReaction(post.id);
       setLiked(state);
@@ -55,38 +62,41 @@ export default function PostCard(props) {
     }
   };
 
-  const handleComment = () => {
+  const handleComment = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     navigate(`/p/${post.id}`);
   };
 
-  const handleEdit = () => {
-    navigate(`/p/edit/${post.id}`);
-  };
+  const handleDelete = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
-  const handleDelete = async () => {
-    const confirmed = confirm("Hapus post ini? Ini tidak bisa dibatalkan.");
+    const confirmed = confirm("Hapus post ini?");
     if (!confirmed) return;
 
     setDeleting(true);
     try {
       const result = await deletePost(post.id, user().id);
       if (result.success) {
-        if (props.onDeleted) {
-          props.onDeleted(post.id);
-        }
+        if (props.onDeleted) props.onDeleted(post.id);
         navigate("/");
-      } else {
-        alert(`Error: ${result.error}`);
       }
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Gagal menghapus post");
     } finally {
       setDeleting(false);
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     try {
       const url = `${window.location.origin}/p/${post.id}`;
       await navigator.clipboard.writeText(url);
@@ -102,7 +112,7 @@ export default function PostCard(props) {
     {
       label: "Edit",
       icon: <Edit3 size={16} />,
-      action: handleEdit,
+      action: () => navigate(`/p/edit/${post.id}`),
     },
     {
       divider: true,
@@ -116,116 +126,69 @@ export default function PostCard(props) {
   ];
 
   return (
-    <article class="rounded-lg border border-neutral-800 bg-neutral-900/50 shadow-sm overflow-hidden transition-all hover:border-neutral-700">
+    <article
+      class="card p-0 overflow-hidden mb-4 border border-zinc-800 cursor-pointer"
+      onClick={() => navigate(`/p/${post.id}`)}
+    >
       {/* Card Header - Author Info */}
-      <div class="flex items-center gap-3 p-4 border-b border-neutral-800">
-        {/* Avatar - Clickable */}
-        <Show
-          when={!loading() && userProfile()}
-          fallback={
-            <div class="h-10 w-10 rounded-full bg-neutral-800 animate-pulse flex-shrink-0" />
-          }
+      <div class="flex items-center gap-3 p-4 border-b border-zinc-800 bg-zinc-900/50">
+        <A
+          href={`/u/${userProfile()?.username || userProfile()?.id}`}
+          class="flex-shrink-0"
+          onClick={(e) => e.stopPropagation()}
         >
-          <A
-            href={`/u/${userProfile()?.username}`}
-            class="flex-shrink-0 hover:opacity-80 transition-opacity"
-            title={`Visit ${userProfile()?.username}'s profile`}
-          >
-            <img
-              src={userProfile()?.pp_url || "/default.png"}
-              alt={userProfile()?.username || "User"}
-              class="h-10 w-10 rounded-full border border-neutral-700 object-cover"
-              loading="lazy"
-            />
-          </A>
-        </Show>
+          <img
+            src={userProfile()?.pp_url || "/default.png"}
+            alt={userProfile()?.username}
+            class="h-10 w-10 rounded-full border border-zinc-700 object-cover"
+          />
+        </A>
 
-        {/* Username & Date - Username clickable */}
         <div class="flex-1 min-w-0">
-          <Show
-            when={!loading() && userProfile()}
-            fallback={
-              <div class="space-y-1">
-                <div class="h-4 bg-neutral-800 rounded w-24 animate-pulse" />
-                <div class="h-3 bg-neutral-800 rounded w-16 animate-pulse" />
-              </div>
-            }
+          <A
+            href={`/u/${userProfile()?.username || userProfile()?.id}`}
+            class="text-sm font-bold text-white hover:text-pink-500 transition-colors"
+            onClick={(e) => e.stopPropagation()}
           >
-            <A
-              href={`/u/${userProfile()?.username}`}
-              class="text-sm font-semibold text-neutral-50 hover:text-emerald-400 transition-colors leading-tight truncate block"
-              title={`Visit @${userProfile()?.username}`}
-            >
-              @{userProfile()?.username || "anon"}
-            </A>
-            <p class="text-xs text-neutral-500 mt-0.5">
-              {new Date(post.created_at).toLocaleDateString("id-ID", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </p>
-          </Show>
+            @{userProfile()?.username || "anon"}
+          </A>
+          <p class="text-[10px] text-zinc-500 uppercase tracking-wider">
+            {new Date(post.created_at).toLocaleDateString("id-ID")}
+          </p>
         </div>
 
-        {/* Menu Button - Only for owner */}
         <Show when={isOwner() && !deleting()}>
           <MenuBar
             items={menuItems()}
             trigger={(open) => (
               <Button
-                size="icon"
                 variant="ghost"
-                onClick={open}
-                title="Post menu"
-                ariaLabel="Post menu"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  open(e);
+                }}
               >
-                <MoreVertical size={16} />
+                <MoreVertical size={18} />
               </Button>
             )}
           />
         </Show>
-
-        {/* Deleting state */}
-        <Show when={deleting()}>
-          <div class="text-xs text-neutral-500">Deleting...</div>
-        </Show>
       </div>
 
       {/* Card Content */}
-      <div class="px-4 py-3 space-y-3">
-        {/* Caption */}
+      <div class="p-4 space-y-4">
         <Show when={post.caption}>
-          <p class="text-sm leading-relaxed text-neutral-300 font-normal break-words">
+          <p class="text-sm text-zinc-300 leading-relaxed break-words">
             {post.caption}
           </p>
         </Show>
 
-        {/* Media Grid */}
         <Show when={post.media?.length > 0}>
-          <div
-            class={`grid gap-1 overflow-hidden rounded-md border border-neutral-700 ${
-              post.media.length === 1
-                ? "grid-cols-1"
-                : post.media.length === 2
-                  ? "grid-cols-2"
-                  : post.media.length === 3
-                    ? "grid-cols-3"
-                    : "grid-cols-2"
-            }`}
-          >
-            <For each={post.media.slice(0, 4)}>
-              {(url, idx) => (
-                <div class="relative overflow-hidden bg-neutral-800 aspect-video cursor-pointer group">
-                  <img
-                    src={url}
-                    alt={`Post image ${idx() + 1}`}
-                    class="w-full h-full object-cover hover:opacity-90 transition-opacity"
-                    loading="lazy"
-                    onClick={() => navigate(`/p/${post.id}`)}
-                  />
-                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                </div>
+          <div class={`grid gap-2 rounded-xl overflow-hidden ${post.media.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <For each={post.media}>
+              {(url) => (
+                <img src={url} class="w-full h-full object-cover aspect-video" />
               )}
             </For>
           </div>
@@ -233,44 +196,34 @@ export default function PostCard(props) {
       </div>
 
       {/* Card Footer - Actions */}
-      <div class="flex items-center gap-1 p-3 pt-2 border-t border-neutral-800">
-        {/* Like Button */}
+      <div class="flex items-center gap-2 p-3 pt-0">
         <Button
           variant={liked() ? "primary" : "outline"}
           size="sm"
           onClick={handleLike}
-          disabled={loading()}
-          leftIcon={<Heart size={14} fill={liked() ? "currentColor" : "none"} stroke-width={2} />}
-          title={liked() ? "Unlike" : "Like"}
-          ariaLabel="Like"
+          className={liked() ? "" : "border-zinc-800"}
+          leftIcon={<Heart size={16} fill={liked() ? "currentColor" : "none"} />}
         >
-          <span class="tabular-nums text-xs">{reactionCount()}</span>
+          {reactionCount()}
         </Button>
 
-        {/* Comment Button */}
         <Button
           variant="outline"
           size="sm"
           onClick={handleComment}
-          disabled={loading()}
-          leftIcon={<MessageCircle size={14} stroke-width={2} />}
-          title="Comment"
-          ariaLabel="Comment"
+          className="border-zinc-800"
+          leftIcon={<MessageCircle size={16} />}
         >
-          <span class="tabular-nums text-xs">{commentCount()}</span>
+          {commentCount()}
         </Button>
 
-        {/* Share Button */}
         <Button
           variant="outline"
           size="icon"
           onClick={handleShare}
-          disabled={loading()}
-          className="ml-auto"
-          title="Share post"
-          ariaLabel="Share"
+          className="ml-auto border-zinc-800"
         >
-          <Share2 size={14} stroke-width={2} />
+          <Share2 size={16} />
         </Button>
       </div>
     </article>
