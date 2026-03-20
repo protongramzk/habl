@@ -1,4 +1,4 @@
-// src/routes/user-profile.jsx
+// src/routes/UserProfile.jsx
 import { useParams } from "@solidjs/router";
 import Profile from "../components/Profile";
 

@@ -3,7 +3,7 @@ import { createSignal, onMount, Show } from "solid-js";
 import { supabase } from "../utils/supabase";
 import { user } from "../utils/auth";
 import { updateUserProfile } from "../utils/user";
-import { uploadToProfilePics } from "../utils/storage-helper";
+import { uploadToProfilePics } from "../utils/storageHelper";
 
 export default function UserForm(props) {
   const [username, setUsername] = createSignal("");

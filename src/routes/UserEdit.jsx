@@ -1,4 +1,4 @@
-// src/routes/user-edit.jsx
+// src/routes/UserEdit.jsx
 import { useNavigate } from "@solidjs/router";
 import UserForm from "../components/UserForm";
 import { user } from "../utils/auth";

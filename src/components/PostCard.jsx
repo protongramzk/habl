@@ -8,8 +8,7 @@ import {
   toggleReaction,
   hasReacted,
 } from "../utils/reaction";
-import { getCommentCount } from "../utils/posts";
-import { deletePost } from "../utils/posts-delete";
+import { getCommentCount, deletePost } from "../utils/posts";
 import { user } from "../utils/auth";
 import MenuBar from "./MenuBar";
 import Button from "./Button";

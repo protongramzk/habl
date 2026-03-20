@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { uploadPost } from "../utils/post";
+import { uploadPost } from "../utils/posts";
 
 export default function CreatePost() {
   const navigate = useNavigate();
