@@ -1,7 +1,7 @@
 import { Router, Route } from "@solidjs/router";
 import { onMount } from "solid-js";
 
-import { initAuth, user } from "./utils/auth";
+import { initAuth } from "./utils/auth";
 import Home from "./routes/Home"
 import Register from "./routes/Register";
 import CreatePost from "./routes/CreatePost";
@@ -9,10 +9,19 @@ import Login from "./routes/Login";
 import PostDetail from "./routes/PostDetail"
 import UserEdit from "./routes/UserEdit"
 import UserProfile from "./routes/UserProfile"
+import GroupList from "./routes/GroupList.jsx";
+import GroupCreate from "./routes/GroupCreate.jsx";
+import FederationCreate from "./routes/FederationCreate.jsx";
+import GroupDetail from "./routes/GroupDetail.jsx";
+import GroupPost from "./routes/GroupPost.jsx";
+
 function App() {
-  // 🚀 init auth saat app start
-  onMount(() => {
-    initAuth();
+  onMount(async () => {
+    try {
+      await initAuth();
+    } catch (err) {
+      console.error('Auth initialization failed:', err);
+    }
   });
 
   return (
@@ -23,9 +32,13 @@ function App() {
       <Route path="/login" component={Login} />
       <Route path="/p/:postId" component={PostDetail} />
       <Route path="/useredit" component={UserEdit} />
-<Route path="/u/:username" component={UserProfile} />
+      <Route path="/u/:username" component={UserProfile} />
+      <Route path="/group-list" component={GroupList} />
+      <Route path="/group-create" component={GroupCreate} />
+      <Route path="/federation-create" component={FederationCreate} />
+      <Route path="/g/:id" component={GroupDetail} />
+      <Route path="/g/:id/post" component={GroupPost} />
     </Router>
-    
   );
 }
 

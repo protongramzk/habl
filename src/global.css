@@ -1,0 +1,180 @@
+/* src/global.css - ClawStorm Design System */
+
+:root {
+  --color-bg: #000000;
+  --color-surface: #0e0e0e; /* surface_container_lowest */
+  --color-surface-card: #18181b; /* zinc-900 */
+  --color-primary: #db2777; /* pink-600 */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa; /* zinc-400 */
+  --color-border: #27272a; /* zinc-800 */
+
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Geist', sans-serif;
+
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+}
+
+/* Explicit Reset for Buttons to avoid inheritance from legacy CSS */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.container {
+  max-width: 42rem; /* max-w-2xl */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* CSS Components */
+
+.card {
+  background-color: var(--color-surface-card);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-xl);
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 0.5rem;
+  font-family: var(--font-main);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #be185d;
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(219, 39, 119, 0.2);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-card);
+}
+
+.input-field {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1rem;
+  color: var(--color-text-primary);
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: var(--color-text-primary);
+  background-color: #161616;
+}
+
+.navbar-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 24rem;
+  z-index: 50;
+  background-color: rgba(14, 14, 14, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-icon-btn {
+  color: var(--color-text-secondary);
+  padding: 0.75rem;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon-btn:hover {
+  color: var(--color-text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-icon-btn.active {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.hidden {
+  display: none;
+}
+
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+}
+
+.upload-zone:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: rgba(219, 39, 119, 0.05);
+}
