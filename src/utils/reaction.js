@@ -2,53 +2,91 @@
 import { supabase } from "./supabase";
 import { user } from "./auth";
 
-// 🔥 ambil jumlah reaction
+/**
+ * Get reaction count for a post
+ * @param {string} postId
+ * @returns {Promise<number>}
+ */
 export async function getReactionCount(postId) {
   const { count, error } = await supabase
     .from("reactions")
     .select("*", { count: "exact", head: true })
     .eq("post_id", postId);
 
-  if (error) throw error;
-  return count;
+  if (error) {
+    console.error("[getReactionCount] Error:", error);
+    throw error;
+  }
+  return count || 0;
 }
 
-// 🔥 cek user sudah react atau belum
+/**
+ * Check if the current user has reacted to a post
+ * @param {string} postId
+ * @returns {Promise<boolean>}
+ */
 export async function hasReacted(postId) {
   const currentUser = user();
   if (!currentUser) return false;
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("reactions")
     .select("id")
     .eq("post_id", postId)
     .eq("account_id", currentUser.id)
     .maybeSingle();
+
+  if (error) {
+    console.error("[hasReacted] Error:", error);
+    return false;
+  }
 
   return !!data;
 }
 
-// 🔥 toggle reaction
+/**
+ * Toggle reaction on a post
+ * @param {string} postId
+ * @returns {Promise<boolean>} - New reaction state (true: reacted, false: not reacted)
+ */
 export async function toggleReaction(postId) {
   const currentUser = user();
   if (!currentUser) throw new Error("Login dulu 😑");
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("reactions")
     .select("id")
     .eq("post_id", postId)
     .eq("account_id", currentUser.id)
     .maybeSingle();
 
+  if (error) {
+    console.error("[toggleReaction] Fetch Error:", error);
+    throw error;
+  }
+
   if (data) {
-    await supabase.from("reactions").delete().eq("id", data.id);
+    const { error: deleteError } = await supabase
+      .from("reactions")
+      .delete()
+      .eq("id", data.id);
+
+    if (deleteError) {
+      console.error("[toggleReaction] Delete Error:", deleteError);
+      throw deleteError;
+    }
     return false;
   } else {
-    await supabase.from("reactions").insert({
+    const { error: insertError } = await supabase.from("reactions").insert({
       post_id: postId,
       account_id: currentUser.id,
-      reaction: "love",
+      reaction: "love", // Default reaction for now
     });
+
+    if (insertError) {
+      console.error("[toggleReaction] Insert Error:", insertError);
+      throw insertError;
+    }
     return true;
   }
 }
