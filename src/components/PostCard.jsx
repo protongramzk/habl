@@ -1,8 +1,6 @@
-// src/components/PostCard.jsx
-import { createSignal, onMount, Show, For } from "solid-js";
+import { createSignal, onMount, Show, For, createMemo } from "solid-js";
 import { useNavigate, A } from "@solidjs/router";
 import { Heart, MessageCircle, Share2, Edit3, Trash2, MoreVertical } from "lucide-solid";
-import { getUserProfile } from "../utils/user";
 import {
   getReactionCount,
   toggleReaction,
@@ -17,7 +15,9 @@ export default function PostCard(props) {
   const navigate = useNavigate();
   const post = props.post;
 
-  const [userProfile, setUserProfile] = createSignal(null);
+  // Author data might be pre-joined (author) or not (account_id)
+  const author = () => post.author || { id: post.account_id, username: 'anon', pp_url: '/default.png' };
+
   const [reactionCount, setReactionCount] = createSignal(0);
   const [commentCount, setCommentCount] = createSignal(0);
   const [liked, setLiked] = createSignal(false);
@@ -26,36 +26,50 @@ export default function PostCard(props) {
 
   onMount(async () => {
     try {
-      const [userData, reactCount, commentCountData, likedState] =
-        await Promise.all([
-          getUserProfile(post.account_id),
-          getReactionCount(post.id),
-          getCommentCount(post.id),
-          hasReacted(post.id),
-        ]);
+      const [reactCount, commCount, likedState] = await Promise.all([
+        getReactionCount(post.id),
+        getCommentCount(post.id),
+        hasReacted(post.id),
+      ]);
 
-      setUserProfile(userData);
       setReactionCount(reactCount || 0);
-      setCommentCount(commentCountData || 0);
+      setCommentCount(commCount || 0);
       setLiked(likedState);
     } catch (err) {
-      console.error("Failed to load post data:", err);
+      console.error("Failed to load post interaction data:", err);
     } finally {
       setLoading(false);
     }
   });
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    e.stopPropagation();
+    if (!user()) {
+      alert("Login dulu 😑");
+      return;
+    }
+
+    const previousLiked = liked();
+    const previousCount = reactionCount();
+
+    // Optimistic UI
+    setLiked(!previousLiked);
+    setReactionCount(prev => previousLiked ? Math.max(0, prev - 1) : prev + 1);
+
     try {
       const state = await toggleReaction(post.id);
       setLiked(state);
-      setReactionCount((prev) => prev + (state ? 1 : -1));
+      // Optional: re-fetch count to ensure accuracy
     } catch (err) {
       console.error("Failed to toggle reaction:", err);
+      // Revert on error
+      setLiked(previousLiked);
+      setReactionCount(previousCount);
     }
   };
 
-  const handleComment = () => {
+  const handleComment = (e) => {
+    e.stopPropagation();
     navigate(`/p/${post.id}`);
   };
 
@@ -73,8 +87,9 @@ export default function PostCard(props) {
       if (result.success) {
         if (props.onDeleted) {
           props.onDeleted(post.id);
+        } else {
+           navigate("/");
         }
-        navigate("/");
       } else {
         alert(`Error: ${result.error}`);
       }
@@ -86,7 +101,8 @@ export default function PostCard(props) {
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = async (e) => {
+    e.stopPropagation();
     try {
       const url = `${window.location.origin}/p/${post.id}`;
       await navigator.clipboard.writeText(url);
@@ -116,115 +132,91 @@ export default function PostCard(props) {
   ];
 
   return (
-    <article class="rounded-lg border border-neutral-800 bg-neutral-900/50 shadow-sm overflow-hidden transition-all hover:border-neutral-700">
-      {/* Card Header - Author Info */}
-      <div class="flex items-center gap-3 p-4 border-b border-neutral-800">
-        {/* Avatar - Clickable */}
-        <Show
-          when={!loading() && userProfile()}
-          fallback={
-            <div class="h-10 w-10 rounded-full bg-neutral-800 animate-pulse flex-shrink-0" />
-          }
-        >
-          <A
-            href={`/u/${userProfile()?.username}`}
-            class="flex-shrink-0 hover:opacity-80 transition-opacity"
-            title={`Visit ${userProfile()?.username}'s profile`}
-          >
-            <img
-              src={userProfile()?.pp_url || "/default.png"}
-              alt={userProfile()?.username || "User"}
-              class="h-10 w-10 rounded-full border border-neutral-700 object-cover"
-              loading="lazy"
-            />
-          </A>
-        </Show>
+    <article
+      class="group relative rounded-xl border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 shadow-sm overflow-hidden transition-all duration-300 hover:border-zinc-700 cursor-pointer"
+      onClick={() => navigate(`/p/${post.id}`)}
+    >
+      <Show when={deleting()}>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-10 flex items-center justify-center">
+          <div class="flex items-center gap-2 text-zinc-400">
+             <div class="w-4 h-4 border-2 border-pink-500 border-t-transparent rounded-full animate-spin" />
+             <span class="text-sm font-medium">Menghapus...</span>
+          </div>
+        </div>
+      </Show>
 
-        {/* Username & Date - Username clickable */}
+      {/* Card Header */}
+      <div class="flex items-center gap-3 p-4">
+        <A
+          href={`/u/${author().username || 'anon'}`}
+          class="flex-shrink-0 relative group/avatar"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <img
+            src={author().pp_url || "/default.png"}
+            alt={author().username || "User"}
+            class="h-10 w-10 rounded-full border border-zinc-700 object-cover bg-zinc-800 transition-transform group-hover/avatar:scale-105"
+          />
+          <div class="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
+        </A>
+
         <div class="flex-1 min-w-0">
-          <Show
-            when={!loading() && userProfile()}
-            fallback={
-              <div class="space-y-1">
-                <div class="h-4 bg-neutral-800 rounded w-24 animate-pulse" />
-                <div class="h-3 bg-neutral-800 rounded w-16 animate-pulse" />
-              </div>
-            }
+          <A
+            href={`/u/${author().username || 'anon'}`}
+            class="text-[15px] font-bold text-zinc-50 hover:text-pink-500 transition-colors leading-tight truncate block"
+            onClick={(e) => e.stopPropagation()}
           >
-            <A
-              href={`/u/${userProfile()?.username}`}
-              class="text-sm font-semibold text-neutral-50 hover:text-emerald-400 transition-colors leading-tight truncate block"
-              title={`Visit @${userProfile()?.username}`}
-            >
-              @{userProfile()?.username || "anon"}
-            </A>
-            <p class="text-xs text-neutral-500 mt-0.5">
-              {new Date(post.created_at).toLocaleDateString("id-ID", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </p>
-          </Show>
+            @{author().username || "anon"}
+          </A>
+          <p class="text-[11px] text-zinc-500 mt-0.5 font-semibold uppercase tracking-wider">
+            {new Date(post.created_at).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+            })}
+          </p>
         </div>
 
-        {/* Menu Button - Only for owner */}
-        <Show when={isOwner() && !deleting()}>
-          <MenuBar
-            items={menuItems()}
-            trigger={(open) => (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={open}
-                title="Post menu"
-                ariaLabel="Post menu"
-              >
-                <MoreVertical size={16} />
-              </Button>
-            )}
-          />
-        </Show>
-
-        {/* Deleting state */}
-        <Show when={deleting()}>
-          <div class="text-xs text-neutral-500">Deleting...</div>
+        <Show when={isOwner()}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <MenuBar
+              items={menuItems()}
+              trigger={(open) => (
+                <button
+                  onClick={open}
+                  class="p-2 -mr-2 text-zinc-500 hover:text-zinc-50 hover:bg-zinc-800/50 rounded-full transition-all"
+                >
+                  <MoreVertical size={18} />
+                </button>
+              )}
+            />
+          </div>
         </Show>
       </div>
 
-      {/* Card Content */}
-      <div class="px-4 py-3 space-y-3">
-        {/* Caption */}
+      {/* Content */}
+      <div class="px-4 pb-3 space-y-3">
         <Show when={post.caption}>
-          <p class="text-sm leading-relaxed text-neutral-300 font-normal break-words">
+          <p class="text-[15px] leading-[1.6] text-zinc-200 font-normal break-words">
             {post.caption}
           </p>
         </Show>
 
-        {/* Media Grid */}
         <Show when={post.media?.length > 0}>
           <div
-            class={`grid gap-1 overflow-hidden rounded-md border border-neutral-700 ${
-              post.media.length === 1
-                ? "grid-cols-1"
-                : post.media.length === 2
-                  ? "grid-cols-2"
-                  : post.media.length === 3
-                    ? "grid-cols-3"
-                    : "grid-cols-2"
+            class={`grid gap-2 overflow-hidden rounded-lg border border-zinc-800/50 ${
+              post.media.length === 1 ? "grid-cols-1" : "grid-cols-2"
             }`}
           >
             <For each={post.media.slice(0, 4)}>
-              {(url, idx) => (
-                <div class="relative overflow-hidden bg-neutral-800 aspect-video cursor-pointer group">
+              {(url) => (
+                <div class="aspect-square bg-zinc-800/50 overflow-hidden relative group/image">
                   <img
                     src={url}
-                    alt={`Post image ${idx() + 1}`}
-                    class="w-full h-full object-cover hover:opacity-90 transition-opacity"
+                    alt="Post media"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-105"
                     loading="lazy"
-                    onClick={() => navigate(`/p/${post.id}`)}
                   />
-                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  <div class="absolute inset-0 bg-black/5 opacity-0 group-hover/image:opacity-100 transition-opacity" />
                 </div>
               )}
             </For>
@@ -232,46 +224,43 @@ export default function PostCard(props) {
         </Show>
       </div>
 
-      {/* Card Footer - Actions */}
-      <div class="flex items-center gap-1 p-3 pt-2 border-t border-neutral-800">
-        {/* Like Button */}
-        <Button
-          variant={liked() ? "primary" : "outline"}
-          size="sm"
+      {/* Actions */}
+      <div class="flex items-center gap-6 px-4 py-3 border-t border-zinc-800/30">
+        <button
+          class={`flex items-center gap-2 text-sm font-semibold transition-all hover:scale-105 active:scale-95 ${
+            liked() ? "text-pink-500" : "text-zinc-400 hover:text-pink-500"
+          }`}
           onClick={handleLike}
           disabled={loading()}
-          leftIcon={<Heart size={14} fill={liked() ? "currentColor" : "none"} stroke-width={2} />}
-          title={liked() ? "Unlike" : "Like"}
-          ariaLabel="Like"
         >
-          <span class="tabular-nums text-xs">{reactionCount()}</span>
-        </Button>
+          <div class={`p-2 rounded-full transition-colors ${liked() ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/5'}`}>
+            <Heart
+              size={20}
+              fill={liked() ? "currentColor" : "none"}
+              stroke-width={liked() ? 2.5 : 2}
+            />
+          </div>
+          <span class="tabular-nums">{reactionCount()}</span>
+        </button>
 
-        {/* Comment Button */}
-        <Button
-          variant="outline"
-          size="sm"
+        <button
+          class="flex items-center gap-2 text-sm font-semibold text-zinc-400 hover:text-white transition-all hover:scale-105 active:scale-95 group/comm"
           onClick={handleComment}
           disabled={loading()}
-          leftIcon={<MessageCircle size={14} stroke-width={2} />}
-          title="Comment"
-          ariaLabel="Comment"
         >
-          <span class="tabular-nums text-xs">{commentCount()}</span>
-        </Button>
+          <div class="p-2 rounded-full group-hover/comm:bg-white/5 transition-colors">
+            <MessageCircle size={20} stroke-width={2} />
+          </div>
+          <span class="tabular-nums">{commentCount()}</span>
+        </button>
 
-        {/* Share Button */}
-        <Button
-          variant="outline"
-          size="icon"
+        <button
+          class="ml-auto p-2 text-zinc-400 hover:text-white transition-all hover:scale-110 active:scale-90"
           onClick={handleShare}
-          disabled={loading()}
-          className="ml-auto"
-          title="Share post"
-          ariaLabel="Share"
+          title="Share"
         >
-          <Share2 size={14} stroke-width={2} />
-        </Button>
+          <Share2 size={18} stroke-width={2} />
+        </button>
       </div>
     </article>
   );

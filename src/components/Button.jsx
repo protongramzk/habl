@@ -46,7 +46,7 @@ export default function Button(props) {
     default:
       "bg-neutral-800 text-neutral-50 hover:bg-neutral-700 border border-neutral-700",
     primary:
-      "bg-emerald-600 text-neutral-50 hover:bg-emerald-500 border border-emerald-600",
+      "bg-pink-600 text-neutral-50 hover:bg-pink-500 border border-pink-600",
     secondary:
       "bg-neutral-700 text-neutral-50 hover:bg-neutral-600 border border-neutral-700",
     ghost:
@@ -69,7 +69,7 @@ export default function Button(props) {
   const variant = local.variant || "default";
   const size = local.size || "md";
   const baseClass =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-pink-600/20 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
 
   const variantClass = variantStyles[variant] || variantStyles.default;
   const sizeClass = sizeStyles[size] || sizeStyles.md;
