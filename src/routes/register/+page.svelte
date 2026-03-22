@@ -46,15 +46,15 @@
 
 <div class="register-container">
   <h1>Register</h1>
-  
+
   {#if error}
     <p class="error">{error}</p>
   {/if}
-  
+
   {#if success}
     <p class="success">{success}</p>
   {/if}
-  
+
   <form on:submit|preventDefault={handleRegister}>
     <label for="email">Email</label>
     <input type="email" id="email" bind:value={email} required />
@@ -65,62 +65,88 @@
     <label for="password">Password</label>
     <input type="password" id="password" bind:value={password} required />
 
-    <button type="submit">Register</button>
+    <button type="submit" class="btn">Register</button>
   </form>
-  
+
   <p>
     Already have an account? <a href="/login">Login here</a>
   </p>
 </div>
 
 <style>
+  :global(body) {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
   .register-container {
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ddd;
+    padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #1e1e1e;
   }
-  
+
   .register-container h1 {
     text-align: center;
+    margin-bottom: 1.5rem;
   }
-  
+
   .register-container form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
   }
-  
+
   .register-container label {
-    font-weight: bold;
+    font-weight: 500;
   }
-  
+
   .register-container input {
-    padding: 8px;
-    border: 1px solid #ccc;
+    padding: 0.75rem;
     border-radius: 4px;
+    background-color: #2d2d2d;
+    border: 1px solid #333;
+    color: #e0e0e0;
   }
-  
-  .register-container button {
-    padding: 10px;
-    background-color: #0077b6;
-    color: white;
+
+  .register-container input:focus {
+    outline: none;
+    border-color: #0077b6;
+  }
+
+  .btn {
+    padding: 0.75rem;
+    background-color: #e0e0e0;
+    color: #000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
   }
-  
-  .register-container button:hover {
-    background-color: #023e8a;
+
+  .btn:hover {
+    background-color: #d0d0d0;
   }
-  
+
   .error {
-    color: red;
+    color: #ff5252;
+    margin-bottom: 1rem;
   }
-  
+
   .success {
-    color: green;
+    color: #4caf50;
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: #0077b6;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 </style>
