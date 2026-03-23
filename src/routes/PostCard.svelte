@@ -1,47 +1,114 @@
 <script lang="ts">
   import type { Post } from '$lib/supabase/posts';
-  
-  // Kita terima data post sebagai props
-  export let post: Post & { accounts: { username: string, pp_url: string | null } };
+  import Card from '$lib/components/Card.svelte';
+
+  let { post } = $props<{
+    post: Post & {
+      accounts: { username: string, pp_url: string | null }
+    }
+  }>();
+
+  const formattedDate = $derived(new Date(post.created_at ?? '').toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }));
 </script>
 
-<div class="post-card">
+<Card class="post-card">
   <div class="header">
-    <img 
-      src={post.accounts?.pp_url ?? '/default-avatar.png'} 
-      alt={post.accounts?.username} 
-      class="avatar"
-    />
-    <span class="username">@{post.accounts?.username}</span>
+    <div class="user-info">
+      <img
+        src={post.accounts?.pp_url ?? 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}
+        alt={post.accounts?.username}
+        class="avatar"
+      />
+      <div class="meta">
+        <a href="/u/{post.accounts?.username}" class="username">@{post.accounts?.username}</a>
+        <span class="date">{formattedDate}</span>
+      </div>
+    </div>
   </div>
 
   <div class="content">
     {#if post.media && post.media.length > 0}
       <div class="media-container">
         {#each post.media as url}
-          <img src={url} alt="Post content" />
+          <img src={url} alt="Post content" loading="lazy" />
         {/each}
       </div>
     {/if}
-    <p class="caption">{post.caption ?? ''}</p>
-  </div>
 
-  <div class="footer">
-    <small>{new Date(post.created_at ?? '').toLocaleDateString()}</small>
+    {#if post.caption}
+      <p class="caption">{post.caption}</p>
+    {/if}
   </div>
-</div>
+</Card>
 
 <style>
-  .post-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background: white;
+  :global(.post-card) {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
-  .header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-  .username { font-weight: bold; }
-  .media-container img { width: 100%; border-radius: 4px; margin-top: 0.5rem; }
-  .caption { margin-top: 0.5rem; line-height: 1.4; }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: var(--border-width) solid var(--border);
+    background: var(--bg);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .username {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .media-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .media-container img {
+    width: 100%;
+    border-radius: var(--radius);
+    display: block;
+    border: var(--border-width) solid var(--border);
+  }
+
+  .caption {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    font-size: 0.95rem;
+  }
 </style>

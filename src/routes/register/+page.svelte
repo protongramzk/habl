@@ -1,152 +1,149 @@
-<svelte:head>
-  <title>Register</title>
-</svelte:head>
-
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { supabase } from '$lib/supabase/client';
   import { accounts } from '$lib/supabase/accounts';
+  import Button from '$lib/components/Button.svelte';
+  import Input from '$lib/components/Input.svelte';
+  import Card from '$lib/components/Card.svelte';
 
-  let email = '';
-  let password = '';
-  let username = '';
-  let error = '';
-  let success = '';
+  let email = $state('');
+  let password = $state('');
+  let username = $state('');
+  let error = $state('');
+  let loading = $state(false);
 
-  async function handleRegister() {
+  async function handleRegister(e: SubmitEvent) {
+    e.preventDefault();
     error = '';
-    success = '';
+    loading = true;
 
     // Create user in Supabase Auth
-    const { error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (authError) {
       error = authError.message;
+      loading = false;
       return;
     }
 
-    // Create account in Supabase DB
-    const { error: dbError } = await accounts.create({
-      username,
-      email,
-    });
+    if (authData.user) {
+      // Create account in Supabase DB
+      const { error: dbError } = await accounts.create({
+        id: authData.user.id,
+        username,
+        // email is not in the accounts table according to database.md
+      });
 
-    if (dbError) {
-      error = dbError.message;
-      return;
+      if (dbError) {
+        error = dbError.message;
+        loading = false;
+        return;
+      }
     }
 
-    success = 'Registration successful! Redirecting to login...';
-    setTimeout(() => goto('/login'), 1000);
+    goto('/login');
   }
 </script>
 
-<div class="register-container">
-  <h1>Register</h1>
+<div class="register-page">
+  <Card class="auth-card">
+    <h1>Register</h1>
 
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
+    {#if error}
+      <p class="error">{error}</p>
+    {/if}
 
-  {#if success}
-    <p class="success">{success}</p>
-  {/if}
+    <form onsubmit={handleRegister}>
+      <Input
+        label="Username"
+        type="text"
+        id="register-username"
+        bind:value={username}
+        required
+        placeholder="johndoe"
+      />
 
-  <form on:submit|preventDefault={handleRegister}>
-    <label for="email">Email</label>
-    <input type="email" id="email" bind:value={email} required />
+      <Input
+        label="Email"
+        type="email"
+        id="register-email"
+        bind:value={email}
+        required
+        placeholder="your@email.com"
+      />
 
-    <label for="username">Username</label>
-    <input type="text" id="username" bind:value={username} required />
+      <Input
+        label="Password"
+        type="password"
+        id="register-password"
+        bind:value={password}
+        required
+        placeholder="••••••••"
+      />
 
-    <label for="password">Password</label>
-    <input type="password" id="password" bind:value={password} required />
+      <Button type="submit" variant="primary" disabled={loading}>
+        {loading ? 'Creating account...' : 'Register'}
+      </Button>
+    </form>
 
-    <button type="submit" class="btn">Register</button>
-  </form>
-
-  <p>
-    Already have an account? <a href="/login">Login here</a>
-  </p>
+    <p class="footer">
+      Already have an account? <a href="/login">Login</a>
+    </p>
+  </Card>
 </div>
 
 <style>
-  :global(body) {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-
-  .register-container {
-    max-width: 400px;
-    margin: 0 auto;
+  .register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: #1e1e1e;
   }
 
-  .register-container h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .register-container form {
+  :global(.auth-card) {
+    width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .register-container label {
-    font-weight: 500;
+  h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.5px;
   }
 
-  .register-container input {
-    padding: 0.75rem;
-    border-radius: 4px;
-    background-color: #2d2d2d;
-    border: 1px solid #333;
-    color: #e0e0e0;
-  }
-
-  .register-container input:focus {
-    outline: none;
-    border-color: #0077b6;
-  }
-
-  .btn {
-    padding: 0.75rem;
-    background-color: #e0e0e0;
-    color: #000;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-  }
-
-  .btn:hover {
-    background-color: #d0d0d0;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
   }
 
   .error {
     color: #ff5252;
-    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    background: rgba(255, 82, 82, 0.1);
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 82, 82, 0.2);
   }
 
-  .success {
-    color: #4caf50;
-    margin-bottom: 1rem;
+  .footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
   }
 
-  a {
-    color: #0077b6;
-    text-decoration: none;
-  }
-
-  a:hover {
+  .footer a {
+    color: var(--text);
     text-decoration: underline;
   }
 </style>
